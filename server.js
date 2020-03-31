@@ -11,6 +11,8 @@ const app = express();
 app.use(cors()); 
 app.use(express.json());
 
+console.log(process.env);
+
 // Database connection
 const host = process.env.MONGODB_URI;
 mongoose.connect(host, {useNewUrlParser: true, useCreateIndex: true});
@@ -22,7 +24,6 @@ connection.on('open', () => { console.log(' > Database connected') });
 app.use('/api', apiRouter);
 
 // Routing to static client for production
-console.log(process.env);
 
 if (process.env.NODE_ENV == "production") {
     app.use(express.static('client/build'))
