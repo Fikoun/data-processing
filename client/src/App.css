@@ -1,0 +1,21 @@
+.theme-navbar {
+    background-color: #76c045;
+    line-height: 35px;
+}
+
+.color-theme {
+    color: #76c045;
+}
+.navbar-toggler {
+    border: none;
+}
+
+.col-form-label {
+    text-align: right;
+}
+
+@media only screen and (max-width: 576px) {
+    .col-form-label {
+        text-align: left;
+    }
+}

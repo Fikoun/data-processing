@@ -1,0 +1,27 @@
+{
+  "name": "data_processing",
+  "version": "1.0.0",
+  "description": "Data procession app for Ceitec",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "npm start --prefix client",
+    "client-install": "npm install --prefix client",
+    "build": "npm run build --prefix client",
+    "heroku-postbuild": "npm run client-install && npm run build"
+  },
+  "author": "Filip Janko",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.6",
+    "nodemon": "^2.0.2"
+  }
+}
