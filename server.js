@@ -11,8 +11,6 @@ const app = express();
 app.use(cors()); 
 app.use(express.json());
 
-console.log(process.env);
-
 // Database connection
 const host = process.env.MONGODB_URI;
 mongoose.connect(host, {useNewUrlParser: true, useCreateIndex: true});
@@ -30,10 +28,10 @@ if (process.env.NODE_ENV == "production") {
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
     });
-}
+} 
 
 // Server start
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`\n > Server running on :${port}`);
-}); 
+});  

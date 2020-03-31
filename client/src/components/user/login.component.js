@@ -24,7 +24,7 @@ export default function UserLogin(props) {
         
         try {
             const response = await api.post("users/login", user);
-            console.log(response);
+            // console.log(response);
             auth.set(response.data)
             props.history.push("/docs");
         } catch (error) {

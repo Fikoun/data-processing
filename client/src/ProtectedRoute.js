@@ -3,7 +3,7 @@ import { Route, Redirect } from "react-router-dom";
 
 import { Context } from './Context';
 
-export default function ProtectedRoute({ permission, component: Component, ...rest }) {
+export default function ProtectedRoute({ permissions, component: Component, ...rest }) {
 
   const auth = useContext(Context);
 
@@ -22,13 +22,16 @@ export default function ProtectedRoute({ permission, component: Component, ...re
   //   })();
   // }, [])
 
+  console.log({auth})
   return (
     <Route {...rest} render={props => {
-      if (auth.user.permission === permission) {
+      if (auth.user.logged === false) {
+        props.history.push("/auth")
+      } else if (permissions.includes(auth.user.permission)) {
         return <Component {...props} />
       }
       else {
-        props.history.push("/auth")
+        window.location = "/";
       }
     }
     }>

@@ -48,7 +48,7 @@ router.route('/login').post(async (req, res) => {
     if (!user || !bcrypt.compareSync(password, user.password))
         return res.status(400).json("Credentials not valid")
 
-    console.log(user);
+    // console.log(user);
     
 
     // Generate "session token" JWT

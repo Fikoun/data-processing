@@ -6,21 +6,20 @@ export default function Auth(props) {
 
     const auth = useContext(Context);
     
-    let permission = false;
-    if (auth.user.permission)
-        permission = auth.user.permission
+    // let permission = false;
+    // if (auth.user.permission)
+    //     permission = auth.user.permission
 
 
     useEffect(() => {
         (async () => {
-            console.log(props.history);
             let res = await auth.isLogged()
             if(res) {
                 props.history.go(-1)
             }else {
                 window.location = "/login";
             }
-            console.log({auth, res});
+            // console.log({auth, res});
         })();
     }, [])
     

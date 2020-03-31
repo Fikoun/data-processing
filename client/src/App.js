@@ -23,8 +23,9 @@ export default function App() {
           <Route path="/edit/:id" exact component={MeasurementEdit} />
           <Route path="/create" exact component={MeasurementCreate} />
           <Route path="/measurements/:id" exact component={Measurement} /> */}
-        <ProtectedRoute path="/docs" permission="registered" exact component={Documentation} />
+        <ProtectedRoute path="/docs" permissions={['user', 'admin']} exact component={Documentation} />
         
+        <Route path="/" exact component={About} />
         <Route path="/about" exact component={About} />
 
         <Route path="/register" exact component={UserRegister} />

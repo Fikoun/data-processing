@@ -1,17 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NavLink as ReactLink } from 'react-router-dom';
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
+import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, Button } from 'reactstrap';
 import logo from '../logo.ico';
 
-// import { Context } from '../context.js';
+import { Context } from '../Context';
 
 
-export default function AppNavbar(){
+export default function AppNavbar() {
+
+    const auth = useContext(Context);
     
     const [collapsed, setCollapsed] = useState(true);
+    const [permission, setPermission] = useState(auth.user.permission);
 
     const toggleNavbar = () => setCollapsed(!collapsed);
     const collapse = () => setCollapsed(true);
+
+    useEffect(() => {
+        if (auth.logged)
+            return setPermission(auth.user.permission);
+
+        (async () => {
+            if(await auth.isLogged())
+                setPermission(auth.user.permission);
+        })();
+    }, []);
 
     return (
         <div>
@@ -28,21 +41,39 @@ export default function AppNavbar(){
                         <NavLink onClick={collapse} tag={ReactLink} exact to="/about" >About</NavLink>
                     </NavItem>
 
-                    <NavItem>
-                        <NavLink onClick={collapse} tag={ReactLink} exact to="/measurements" >Measurements</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink onClick={collapse} tag={ReactLink} exact to="/docs" >Documentation</NavLink>
-                    </NavItem>
+                    { ['user', 'admin'].includes(permission) &&
+                        <NavItem>
+                            <NavLink onClick={collapse} tag={ReactLink} exact to="/measurements" >Measurements</NavLink>
+                        </NavItem>
+                    }
 
-                    
-                    <NavItem>
-                        <NavLink onClick={collapse} tag={ReactLink} exact to="/login" >Login</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink onClick={collapse} tag={ReactLink} exact to="/register" >Register</NavLink>
-                    </NavItem>
+                    { ['registered', 'user', 'admin'].includes(permission) &&
+                        <NavItem>
+                            <NavLink onClick={collapse} tag={ReactLink} exact to="/docs" >Documentation</NavLink>
+                        </NavItem>
+                    }
+
+                    { permission == 'public' &&
+                        <>
+                            <NavItem>
+                                <NavLink onClick={collapse} tag={ReactLink} exact to="/login" >Login</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink onClick={collapse} tag={ReactLink} exact to="/register" >Register</NavLink>
+                            </NavItem>
+                        </>
+                    }
                 </Nav>
+
+                { ['registered', 'user', 'admin'].includes(permission) &&
+                    <Nav className="ml-auto" navbar>
+                        <NavItem className="my-2">
+                            <Button className="px-3" color="danger" onClick={()=>auth.unset()} >Logout</Button>
+                        </NavItem>
+                    </Nav>
+                }
+
+
             </Collapse>
         </Navbar>
         </div>

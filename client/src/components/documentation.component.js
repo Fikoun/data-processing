@@ -12,14 +12,13 @@ export default function Documentation() {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        async function fetchUsers() {
+        (async () => {
             if(!await auth.isLogged())
                 window.location = "/login";
                 
             let response = await api.get('users', auth.user.token);
             setUsers(response.data);
-        }
-        fetchUsers();
+        })();
     }, [])
 
 
