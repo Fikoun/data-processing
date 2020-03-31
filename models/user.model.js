@@ -24,7 +24,7 @@ const userScheme = new Schema({
     },
     permission: {
         type: String,
-        enum : ['reqistered', 'user', 'admin'],
+        enum : ['registered', 'user', 'admin'],
         default: 'registered'
     },
 },{ timestamps: true });
