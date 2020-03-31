@@ -22,7 +22,8 @@ export default function ProtectedRoute({ permissions, component: Component, ...r
   //   })();
   // }, [])
 
-  console.log({auth})
+  //console.log({auth})
+  
   return (
     <Route {...rest} render={props => {
       if (auth.user.logged === false) {

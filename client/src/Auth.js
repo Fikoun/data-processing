@@ -31,7 +31,7 @@ class Auth {
   }
 
   set(update) {
-      console.log({update});
+      //console.log({update});
       
       if (update.token)
         localStorage.setItem('token', update.token);
