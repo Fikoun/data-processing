@@ -22,6 +22,8 @@ connection.on('open', () => { console.log(' > Database connected') });
 app.use('/api', apiRouter);
 
 // Routing to static client for production
+console.log(process.env);
+
 if (process.env.NODE_ENV == "production") {
     app.use(express.static('client/build'))
     app.get('*', (req, res) => {
