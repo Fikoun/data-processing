@@ -108,7 +108,7 @@ export default function Measurement(props) {
         for (let i = 0; i < measurement.data.length; i += 2) {
             if (i + 2 > measurement.data.length)
                 break;
-            let values = [i, measurement.data[i].value, measurement.data[i + 1].value].map(Math.round);
+            let values = [i/2, measurement.data[i].value, measurement.data[i + 1].value].map(Math.round);
             data.push(values);
         }
     } else {
