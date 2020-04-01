@@ -13,7 +13,7 @@ const measurementScheme = new Schema({
     duration: {
         type: Number,
         required: true
-    },
+    }, 
     data: [{
         time: {
             type: Date

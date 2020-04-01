@@ -21,7 +21,6 @@ router.route('/add').post(middleware, (req, res) => {
     const name = req.body.name;
     const description = req.body.description;
     const duration = Number(req.body.duration);
-    const preset = req.body.preset;
 
     const measurement = new Measurement({ name, description, duration, preset });
 
