@@ -105,8 +105,6 @@ export default function Measurement(props) {
 
     let data = [];
     if (measurement.data && measurement.data.length > 0) {
-        const beginTime = new Date(measurement.data[0].time).getTime();
-
         for (let i = 0; i < measurement.data.length; i += 2) {
             if (i + 2 > measurement.data.length)
                 break;
@@ -114,7 +112,7 @@ export default function Measurement(props) {
             data.push(values);
         }
     } else {
-        data = [0, 0, 0]
+        data = [[0, 0, 0]];
     }
 
     console.log(data);
