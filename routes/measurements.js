@@ -22,7 +22,7 @@ router.route('/add').post(middleware, (req, res) => {
     const description = req.body.description;
     const duration = Number(req.body.duration);
 
-    const measurement = new Measurement({ name, description, duration, preset });
+    const measurement = new Measurement({ name, description, duration });
 
     measurement.save()
         .then(() => res.json('Successfully added'))
