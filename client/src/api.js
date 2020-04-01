@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const developmentURL = "http://localhost:5000/api/";
-const productionURL = `https:://${new URL(window.location).hostname}/api`;
+const productionURL = `https://${new URL(window.location).hostname}/api`;
 
 const axios_instance = axios.create({
   baseURL: productionURL
