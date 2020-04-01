@@ -26,7 +26,7 @@ export default function UserLogin(props) {
             const response = await api.post("users/login", user);
             // console.log(response);
             auth.set(response.data)
-            props.history.push("/docs");
+            window.location = "/docs";
         } catch (error) {
             setError(error);
             setLoading(false);

@@ -11,7 +11,7 @@ export default function AppNavbar() {
     const auth = useContext(Context);
     
     const [collapsed, setCollapsed] = useState(true);
-    const [permission, setPermission] = useState(auth.user.permission);
+    const [permission, setPermission] = useState('public');
 
     const toggleNavbar = () => setCollapsed(!collapsed);
     const collapse = () => setCollapsed(true);
@@ -41,7 +41,7 @@ export default function AppNavbar() {
                         <NavLink onClick={collapse} tag={ReactLink} exact to="/about" >About</NavLink>
                     </NavItem>
 
-                    { ['user', 'admin'].includes(permission) &&
+                    { ['registered', 'user', 'admin'].includes(permission) &&
                         <NavItem>
                             <NavLink onClick={collapse} tag={ReactLink} exact to="/measurements" >Measurements</NavLink>
                         </NavItem>

@@ -12,8 +12,11 @@ export default function Alerts(props) {
         alerts = [['primary', alerts.toString()]];
 
     if (props.error) {
+        console.log([props.error]);
+        
         let errors = props.error.response ?? props.error;
-        errors = errors.data ?? [errors.toString()];
+        errors = errors.errors ?? errors;
+        errors = errors.data ?? errors;
         errors = errors.message ?? [errors.toString()];
 
         if (!Array.isArray(errors))

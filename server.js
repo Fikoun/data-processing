@@ -14,6 +14,7 @@ app.use(express.json());
 // Database connection
 const host = process.env.MONGODB_URI;
 mongoose.connect(host, {useNewUrlParser: true, useCreateIndex: true});
+mongoose.set('useFindAndModify', false);
 
 const connection = mongoose.connection;
 connection.on('open', () => { console.log(' > Database connected') });

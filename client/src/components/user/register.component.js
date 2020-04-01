@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, Card, CardBody, CardHeader, Col, Container, Row, Form, FormGroup, Input, Label, Spinner } from 'reactstrap';
 import Alerts from '../alerts.component';
 
 import api from '../../api';
+import { Context } from '../../Context';
 
 export default function UserRegister(props) {
+    
+    const auth = useContext(Context);
 
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
@@ -30,8 +33,9 @@ export default function UserRegister(props) {
         };
 
         try {
-            await api.post("users/register", user);
-            props.history.push("/documentation");
+            const response = await api.post("users/register", user);
+            auth.set(response.data)
+            window.location = "/docs";
         } catch (error) {
             setError(error);
             setPassword('');

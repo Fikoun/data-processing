@@ -10,6 +10,7 @@
     "client": "npm start --prefix client",
     "client-install": "npm install --prefix client",
     "build": "npm run build --prefix client",
+    "setup": "npm run client-install && npm install",
     "heroku-postbuild": "npm run client-install && npm run build"
   },
   "author": "Filip Janko",

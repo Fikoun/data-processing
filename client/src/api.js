@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const developmentURL = "http://localhost:5000/"; 
- 
+const developmentURL = "http://localhost:5000/";
+
 const axios_instance = axios.create({
-  baseURL: 'api/'
+  baseURL: developmentURL + 'api/'
 });
 
 class Api {

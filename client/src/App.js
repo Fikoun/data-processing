@@ -10,6 +10,12 @@ import UserLogin from "./components/user/login.component";
 import Documentation from "./components/documentation.component";
 import About from "./components/about.component";
 import Auth from "./components/auth.component";
+
+import MeasurementsList from "./components/measurements/list.component";
+import MeasurementCreate from "./components/measurements/create.component";
+import Measurement from "./components/measurements/detail.component";
+
+
 import { AuthProvider } from './Context';
 
 export default function App() {
@@ -19,11 +25,11 @@ export default function App() {
         
         <AppNavbar />
 
-          {/* <Route path="/" exact component={MeasurementsList} />
-          <Route path="/edit/:id" exact component={MeasurementEdit} />
-          <Route path="/create" exact component={MeasurementCreate} />
-          <Route path="/measurements/:id" exact component={Measurement} /> */}
-        <ProtectedRoute path="/docs" permissions={['user', 'admin']} exact component={Documentation} />
+        <Route path="/measurements" exact component={MeasurementsList} />
+        <Route path="/measurements/new" exact component={MeasurementCreate} />
+        <Route path="/measurement/:id" exact component={Measurement} />
+
+        <Route path="/docs" exact component={Documentation} />
         
         <Route path="/" exact component={About} />
         <Route path="/about" exact component={About} />

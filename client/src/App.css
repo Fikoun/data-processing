@@ -19,3 +19,12 @@
         text-align: left;
     }
 }
+
+.nav-link {
+    color: white !important;
+    padding: 0 1.3em !important;
+}
+
+.nav-link.active {
+    border-bottom: 3px solid white;
+}

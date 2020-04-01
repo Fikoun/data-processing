@@ -24,14 +24,14 @@ class Auth {
       this.logged = true;
       return this.logged;
     } catch (error) {
-      console.log(error);
+      console.log({error});
       this.logged = false;
       return this.logged;
     }
   }
 
   set(update) {
-      //console.log({update});
+      console.log({update});
       
       if (update.token)
         localStorage.setItem('token', update.token);

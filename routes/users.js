@@ -24,7 +24,7 @@ router.route('/register').post(async (req, res) => {
         const token = await jwt.sign(
             { id: user.id, },
             process.env.JWT_KEY,
-            { expiresIn: 1800 });
+            { expiresIn: 12000 });
 
         res.json({ token })
     } catch (error) {
@@ -55,7 +55,7 @@ router.route('/login').post(async (req, res) => {
     const token = await jwt.sign(
         { id: user.id, },
         process.env.JWT_KEY,
-        { expiresIn: 1800 });
+        { expiresIn: 12000 });
 
     return res.json({ user: {
                         id: user.id,
@@ -87,16 +87,11 @@ router.route('/auth').post(async (req, res) => {
 });
 
 
-
-
-// @route   GET /users
-// @desc    Fetches all users without the password field
-// @access  admin
-router.route('/').get(middleware, (req, res) => {
-    User.find().select('-password')
-        .then(users => res.json(users))
-        .catch(err => res.status(400).json(err));
-});
+// router.route('/').get(middleware, (req, res) => {
+//     User.find().select('-password')
+//         .then(users => res.json(users))
+//         .catch(err => res.status(400).json(err));
+// });
 
 
 module.exports = router;
