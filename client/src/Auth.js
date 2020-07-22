@@ -13,7 +13,7 @@ class Auth {
       return true;
 
     let token = this.user.token || localStorage.getItem('token');
-    if (token=="")
+    if (token === "")
       token = localStorage.getItem('token');
     
     try {

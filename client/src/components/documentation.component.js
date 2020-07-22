@@ -1,26 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React from 'react';
 import { Container } from 'reactstrap';
 import chamberImage from '../imgs/chamber.png';
 
-import api from '../api';
-import { Context } from '../Context';
-
 export default function Documentation() {
-
-    const auth = useContext(Context);
-
-    const [users, setUsers] = useState([]);
-
-    useEffect(() => {
-        (async () => {
-            if(!await auth.isLogged())
-                window.location = "/login";
-                
-            let response = await api.get('users', auth.user.token);
-            setUsers(response.data);
-        })();
-    }, [])
-
 
     return (
         <Container>
@@ -29,7 +11,7 @@ export default function Documentation() {
                 This documentation describes the prcess of operating MOTES pressure chamber and <br/>
                 manual for controling the web aplication.
             </p>
-            <img src={chamberImage} height="500px" alt="Chamber" style={{float:'right'}}/> 
+            <img src={chamberImage} alt="Chamber" style={{float:'right', height:'500px'}} /> 
             
             <h3 className="pt-3">How to operate MOTES pressure chamber</h3>
             <ul>
@@ -50,8 +32,6 @@ export default function Documentation() {
                 <li>For edditing measurement select 'Edit' in measurement detail</li>
                 <li>To remove measurement double click Remove in measurement detail</li>
             </ul>
-        
         </Container>
     );
-    
 }

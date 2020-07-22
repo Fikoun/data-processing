@@ -13,7 +13,7 @@ export default function Auth(props) {
 
     useEffect(() => {
         (async () => {
-            let res = await auth.isLogged()
+            const res = await auth.isLogged()
             if(res) {
                 props.history.go(-1)
             }else {
@@ -25,7 +25,7 @@ export default function Auth(props) {
     
     return (
         <Container className="text-center py-5">
-           <Spinner className="my-5 color-theme" size="lg"/>
+           <Spinner className="my-5 theme-color" size="lg"/>
         </Container>
     );
 }

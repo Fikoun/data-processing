@@ -13,7 +13,12 @@ const measurementScheme = new Schema({
     duration: {
         type: Number,
         required: true
-    }, 
+    },
+    state: {
+        type: String,
+        enum : ['new', 'running', 'error'],
+        default: 'new'
+    },
     data: [{
         time: {
             type: Date
@@ -21,7 +26,8 @@ const measurementScheme = new Schema({
         value: {
             type: Number
         } 
-    }]
+    }],
+    device: mongoose.Types.ObjectId
 },{ timestamps: true });
 
 const Measurement = mongoose.model('Measurement', measurementScheme);

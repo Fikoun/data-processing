@@ -4,6 +4,11 @@ const cors = require('cors');
 const apiRouter = require('./routes/api');
 const path =  require('path');
 
+// ADD: choice option and default value
+// !
+// config cotnroller
+// !
+
 // Config and app init
 require('dotenv').config();
 

@@ -16,17 +16,17 @@ export default function UserLogin(props) {
     const [loading, setLoading] = useState(false);
 
     const login = async (e) => {
-        e.preventDefault();
-        
+        e && e.preventDefault();
+
         setLoading(true);
 
         const user = { email, password };
-        
+
         try {
             const response = await api.post("users/login", user);
             // console.log(response);
             auth.set(response.data)
-            window.location = "/docs";
+            window.location = "/measurements";
         } catch (error) {
             setError(error);
             setLoading(false);
@@ -37,10 +37,10 @@ export default function UserLogin(props) {
         <Container>
             <Row className="justify-content-center">
                 <Col className="my-3" sm="12" lg="10">
-                    <Card>
+                    <Card onKeyPress={event => ((event.key === "Enter") ? login() : void (0))}>
                         <CardHeader> <h4 className="my-0">Login</h4> </CardHeader>
-                        { error && <Alerts error={error} /> }
-                        
+                        {error && <Alerts error={error} />}
+
                         <CardBody>
                             <Form>
                                 <FormGroup row>
@@ -55,7 +55,7 @@ export default function UserLogin(props) {
                                         <Input type="password" placeholder="Password" onChange={({ currentTarget }) => setPassword(currentTarget.value)} />
                                     </Col>
                                 </FormGroup>
-                              
+
 
                                 <FormGroup check row>
                                     <Col sm={12} className="text-center">
@@ -64,7 +64,7 @@ export default function UserLogin(props) {
                                         </Button>
                                     </Col>
                                     <Col sm={12} className="text-center">
-                                        <Button color="link" className="px-4 py-2 my-2" onClick={()=>props.history.push("/register")} >
+                                        <Button color="link" className="px-4 py-2 my-2" onClick={() => props.history.push("/register")} >
                                             Register
                                         </Button>
                                     </Col>
@@ -74,7 +74,7 @@ export default function UserLogin(props) {
                     </Card>
                 </Col>
             </Row>
-        </Container>
+        </Container >
     );
 
 }

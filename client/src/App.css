@@ -1,23 +1,21 @@
-.theme-navbar {
+.theme-color { color: #76c045; }
+
+.theme-background, .theme-button, .theme-navbar {
     background-color: #76c045;
+}
+.theme-button {
+    border-color: #76c045;
+}
+.theme-button:hover {
+    background-color: #578a33;
+}
+.theme-navbar{
     line-height: 35px;
 }
 
-.color-theme {
-    color: #76c045;
-}
+
 .navbar-toggler {
     border: none;
-}
-
-.col-form-label {
-    text-align: right;
-}
-
-@media only screen and (max-width: 576px) {
-    .col-form-label {
-        text-align: left;
-    }
 }
 
 .nav-link {
@@ -27,4 +25,32 @@
 
 .nav-link.active {
     border-bottom: 3px solid white;
+}
+
+
+.col-form-label {
+    text-align: right;
+}
+@media only screen and (max-width: 576px) {
+    .col-form-label {
+        text-align: left;
+    }
+}
+
+fieldset {
+    border: 2px solid rgb(51, 51, 51);
+    border-radius: 5px;
+    padding: 0 0 20px 0;
+    margin: 20px 0;
+}
+
+legend{
+    display: inline;
+    width: auto;
+    background-color: white;
+    padding: 0 10px;
+}
+
+.pointer {
+    cursor: pointer;
 }

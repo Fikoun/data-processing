@@ -5,7 +5,6 @@ import Alerts from '../alerts.component';
 
 import api from '../../api';
 import { Context } from '../../Context';
-import { set } from 'mongoose';
 
 export default function Measurement(props) {
 
@@ -51,6 +50,7 @@ export default function Measurement(props) {
         setMeasurement(update);
         try {
             await api.post(`measurements/update/${measurement._id}`, update, auth.user.token);
+            measurementRefresh();
             setLoading(false);
             setEditing(false);
         } catch (error) {
@@ -76,6 +76,9 @@ export default function Measurement(props) {
     const measurementRefresh = async () => {
         try {
             let response = await api.get(`measurements/${props.match.params.id}`, auth.user.token);
+            if (response.data.state == 'running') {
+                setTimeout(() => measurementRefresh(), 2000);
+            }
             setMeasurement(response.data);
         } catch (error) {
             setError(error);
@@ -84,21 +87,31 @@ export default function Measurement(props) {
 
 
     const measurementStart = async () => {
-        if (running)
+        if (running) {
+            try {
+                console.log(await api.get(`measurements/stop/${props.match.params.id}`, auth.user.token));
+    
+                // measurementRefresh()
+                setRunning(false)
+            } catch (error) {
+                setError(error);
+                setRunning(false)
+            }
             return;
+        }
+            
 
         setRunning(true);
 
         try {
-            const refresh = setInterval(() => measurementRefresh(), 1000);
-
+            
             await api.get(`measurements/run/${props.match.params.id}`, auth.user.token);
-
-            clearInterval(refresh)
-            measurementRefresh()
-            setRunning(false)
+            
+            setTimeout(() => measurementRefresh(), 1000);
+            // measurementRefresh()
+            setRunning(true)
         } catch (error) {
-            setError(error);
+            setError(error.response.data || error);
             setRunning(false)
         }
     }
@@ -115,7 +128,7 @@ export default function Measurement(props) {
         data = [[0, 0, 0]];
     }
 
-    console.log(data);
+    //console.log(data);
     
 
     return (
@@ -128,9 +141,8 @@ export default function Measurement(props) {
                 </Col>
 
                 <Col md="6" className="text-right py-3">
-                    <Button color={running ? "warning" : "success"} disabled={running} className="px-4 mr-2" onClick={() => measurementStart()}>
-                        {running ? (<> Running <Spinner size="sm" color="ligth" /> </>)
-                            : "Start Measurement"}
+                    <Button color={running ? "danger" : "success"} className="px-4 mr-2" onClick={() => measurementStart()}>
+                        {running ? "Stop Measurement" : "Start Measurement"}
                     </Button>
                     <Button color="info" disabled={editing} className="px-4 mx-2" onClick={() => setEditing(true)}>
                         Edit
@@ -154,7 +166,7 @@ export default function Measurement(props) {
                         ]}
                         options={{
                             hAxis: {
-                                title: 'Time (seconds)',
+                                title: 'Time (s)',
                             },
                             series: {
                                 0: { axis: 'Temperature' },
@@ -162,8 +174,8 @@ export default function Measurement(props) {
                             },
                             axes: {
                                 y: {
-                                    Temperature: { label: 'Tempreture (Kelvin)' },
-                                    Layer: { label: 'Thickness' },
+                                    Temperature: { label: 'Tempreture [°C]' },
+                                    Layer: { label: 'Thickness [Å]' },
                                 },
                             },
                         }}

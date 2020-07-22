@@ -1,12 +1,18 @@
 const router = require('express').Router();
+
 let Measurement = require('../models/measurement.model');
+let Device = require('../models/device.model');
+let Station = require('../models/station.model');
 let User = require('../models/user.model');
-const middleware = require('../middleware');
+
+const {logged, auth} = require('../middleware');
+const SerialPort = require('serialport');
+const socket = require('../socket');
 
 // @route   GET /measurements
 // @desc    Gets all measurements
 // @access  user
-router.route('/').get(middleware, (req, res) => {
+router.route('/').get(logged, (req, res) => {
     Measurement.find()
         .then((measurements) => {
             res.json(measurements);
@@ -17,12 +23,13 @@ router.route('/').get(middleware, (req, res) => {
 // @route   POST /measurements/add
 // @desc    Adds new measurement
 // @access  user
-router.route('/add').post(middleware, (req, res) => {
+router.route('/add').post(logged, (req, res) => {
     const name = req.body.name;
     const description = req.body.description;
     const duration = Number(req.body.duration);
+    const device = req.body.device;
 
-    const measurement = new Measurement({ name, description, duration });
+    const measurement = new Measurement({ name, description, duration, device });
 
     measurement.save()
         .then(() => res.json('Successfully added'))
@@ -32,7 +39,7 @@ router.route('/add').post(middleware, (req, res) => {
 // @route   GET /measurements/:id
 // @desc    Gets measurement by id
 // @access  user
-router.route('/:id').get(middleware, (req, res) => {
+router.route('/:id').get(logged, (req, res) => {
     Measurement.findById(req.params.id)
         .then(async measurement => {
             res.json(measurement)
@@ -43,7 +50,7 @@ router.route('/:id').get(middleware, (req, res) => {
 // @route   GET /measurements/delete/:id
 // @desc    Deletes measurement by id
 // @access  user
-router.route('/delete/:id').get(middleware, (req, res) => {
+router.route('/delete/:id').get(logged, (req, res) => {
     Measurement.findByIdAndDelete(req.params.id)
         .then(() => res.json('Successufuly deleted.'))
         .catch(err => res.status(400).json(err))
@@ -52,7 +59,7 @@ router.route('/delete/:id').get(middleware, (req, res) => {
 // @route   POST /measurements/:id
 // @desc    Updates measurement by id
 // @access  user
-router.route('/update/:id').post(middleware, (req, res) => {
+router.route('/update/:id').post(logged, (req, res) => {
     Measurement.findById(req.params.id)
         .then(measurement => {
             measurement.name = req.body.name;
@@ -65,36 +72,89 @@ router.route('/update/:id').post(middleware, (req, res) => {
         });
 });
 
-// @route   GET /measurements//:id
+const connections = [];
+// @route   GET /measurements/:id
 // @desc    (Example - runs random data)
 // @access  user
-router.route('/run/:id').get(middleware, async (req, res) => {
+router.route('/run/:id').get(logged, async (req, res) => {
     const random = (low, high) => (Math.random() * (high - low) + low);
 
     try {
         const measurement = await Measurement.findById(req.params.id);
-        const data = measurement.data;
+        let station = await Station.findOne({
+            devices: {
+                $elemMatch: { _id: measurement.device }
+            }
+        });
+        let device = station.devices.find((d) => d._id.toString() == measurement.device.toString())
 
-        const loop = (i) => {
-            if (i == measurement.duration)
+        let client;
+        socket.clients.forEach((config, c) => {
+            if (config.id == station._id)
+                client = c
+        })   
+        
+        // console.log({ds:station.devices, device, id:measurement.device});
+        
+        measurement.state = 'running';
+        await measurement.save();
+        
+        var duration = measurement.duration;
+        if (duration == 0) {
+            duration = 100000000;
+        }
+        duration = 100000000;
+
+
+        const loop = async (i) => {
+            const measurement = await Measurement.findById(req.params.id);
+            const data = measurement.data;
+
+            if (i == duration || measurement.state != 'running')
                 return res.json(true)
             
-            setTimeout(async () => {
-                let time = Date.now();
-                
-                let temperature = random(i + 2, 32);
-                let layer = temperature - random(2, 5);
+            setTimeout(() => {
+                client.onData = async (d) => {
+                    console.log({d});
+                    if(d.error)
+                        return res.status(400).json(d.error);
 
-                data.push({time, value: temperature}, {time, value: layer});
-                await Measurement.findByIdAndUpdate(measurement._id, { data })
-                loop(i + 1)
+                    let time = Date.now();
+                    let temperature = parseFloat(d);
+                    let layer = temperature + random(2, 5);
+
+                    data.push({time, value: temperature}, {time, value: layer});
+                    await Measurement.findByIdAndUpdate(measurement._id, { data })
+                    loop(i + 1)
+                } 
+                console.log("emit");
+                
+                client.emit('command', {path: device.port, command: 'get'})
+
             }, 1000);
         }
         loop(0)
     } catch (error) {
+        console.log(error);
+        
         res.status(400).json(error);
     }
+    res.json('started')
+});
 
+
+router.route('/stop/:id').get(logged, async (req, res) => {
+
+    try {
+        const measurement = await Measurement.findById(req.params.id);
+
+        measurement.state = 'new';
+        measurement.save();
+        
+        res.json("stopped")
+    } catch (error) {
+        res.status(400).json(error);
+    }
 });
 
 module.exports = router;

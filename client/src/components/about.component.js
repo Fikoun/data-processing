@@ -1,12 +1,7 @@
 import React from 'react';
-import { Container, Row, Col, Card, CardHeader, CardBody, Button, CardText } from 'reactstrap';
-import chamberImage from '../imgs/chamber.png';
+import { Container, Row, Col, Card, CardBody, CardText } from 'reactstrap';
 
 export default function About(props) {
-
-    const measurementPreview = () => {
-        props.history.push('/demo')
-    }
     
     return (
         <Container>
@@ -27,23 +22,30 @@ export default function About(props) {
             E-mail: <strong>jakub.hruby@ceitec.vutbr.cz</strong> <br/>
             Phone: <strong>+420 608 072 211</strong>
 
-            <h2 className="mt-5x">Team</h2>
+            <h2 className="mt-5">Team</h2>
             <Row className="justify-content-center align-items-center">
                 <Col className="my-3">
                     <Card className="mx-auto" style={{width: '300px'}}>
-                        <img src="http://spectroscopy.ceitec.cz/files/273/129.jpg" class="card-img-top" alt="..." width="200px"/>
+                        <img src="http://spectroscopy.ceitec.cz/files/273/129.jpg" className="card-img-top" alt="Jakub Hrubý"/>
                         <CardBody>
                             <h3>Jakub Hrubý</h3>
-                            <CardText>Researcher and project leader, Ph.D. Student</CardText>
+                            <CardText>
+                                Researcher and project leader <br/>
+                                <strong>Ph.D. Student</strong>
+
+                            </CardText>
                         </CardBody>
                     </Card>
                 </Col>
                 <Col className="my-3">
                     <Card className="mx-auto" style={{width: '300px'}}>
-                        <img src="http://spectroscopy.ceitec.cz/files/273/192.jpg" class="card-img-top" alt="..." width="200px"/>
+                        <img src="http://spectroscopy.ceitec.cz/files/273/192.jpg" className="card-img-top" alt="Filip Janko"/>
                         <CardBody>
                             <h3>Filip Janko</h3>
-                            <CardText>Developer, High School Student</CardText>
+                            <CardText>
+                                Developer <br/> 
+                                <strong>High School Student</strong>
+                            </CardText>
                         </CardBody>
                     </Card>
                 </Col>

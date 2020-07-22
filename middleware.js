@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = function auth(req, res, next) {
+module.exports.logged = function (req, res, next) {
     const authorization = req.header('Authorization')
 
     if (!authorization || authorization.split(" ").length < 2)
@@ -10,9 +10,13 @@ module.exports = function auth(req, res, next) {
 
     try {
         const data = jwt.verify(token, process.env.JWT_KEY)
-        req.user = data;
+        req.user = data; // reupdate
         next();
     } catch (error) {
         return res.status(400).json("Token invalid!")
     }
+}
+
+module.exports.auth = function (user, permission, id=false) {
+    
 }

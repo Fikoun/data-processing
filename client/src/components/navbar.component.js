@@ -29,7 +29,7 @@ export default function AppNavbar() {
     return (
         <div>
         <Navbar className="navbar-expand-lg theme-navbar" dark>
-            <NavbarBrand href="/" className="mr-auto align-middle pr-3">
+            <NavbarBrand href={['public'].includes(permission) ? '/' : '/measurements'} className="mr-auto align-middle pr-3">
                 <img className="d-inline-block align-top mx-3" src={logo} width="40px" alt="logo"/>
                 DataPro
             </NavbarBrand>
@@ -37,10 +37,6 @@ export default function AppNavbar() {
             <NavbarToggler onClick={toggleNavbar} className="mr-2" />
             <Collapse isOpen={!collapsed} navbar>
                 <Nav navbar>
-                    <NavItem>
-                        <NavLink onClick={collapse} tag={ReactLink} exact to="/about" >About</NavLink>
-                    </NavItem>
-
                     { ['registered', 'user', 'admin'].includes(permission) &&
                         <NavItem>
                             <NavLink onClick={collapse} tag={ReactLink} exact to="/measurements" >Measurements</NavLink>
@@ -53,7 +49,7 @@ export default function AppNavbar() {
                         </NavItem>
                     }
 
-                    { permission == 'public' &&
+                    { ['public'].includes(permission) &&
                         <>
                             <NavItem>
                                 <NavLink onClick={collapse} tag={ReactLink} exact to="/login" >Login</NavLink>
@@ -63,11 +59,15 @@ export default function AppNavbar() {
                             </NavItem>
                         </>
                     }
+                    
+                    <NavItem>
+                        <NavLink onClick={collapse} tag={ReactLink} exact to="/about" >About</NavLink>
+                    </NavItem>
                 </Nav>
 
                 { ['registered', 'user', 'admin'].includes(permission) &&
                     <Nav className="ml-auto" navbar>
-                        <NavItem className="my-2">
+                        <NavItem className="px-4 my-2">
                             <Button className="px-3" color="danger" onClick={()=>auth.unset()} >Logout</Button>
                         </NavItem>
                     </Nav>
