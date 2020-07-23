@@ -33,7 +33,7 @@ export default function MeasurementsList(props) {
         setLoading(true)
         let newDevices = devices;
         try {
-            let response = await api.post('devices/command/'+devices[key]._id, {command: 'get'}, auth.user.token);
+            let response = await api.post('devices/command/'+devices[key]._id, {command: "default"}, auth.user.token);
             newDevices[key] = response.data;
             setDevices(newDevices);
         } catch (error) {

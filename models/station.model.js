@@ -12,7 +12,10 @@ const stationScheme = new Schema({
     devices: [
         {
             name: String,
-            
+            baudRate: {
+                type: Number,
+                default: 9600
+            },
             port: {
                 type: String,
                 required: true

@@ -6,11 +6,15 @@ class DeviceController {
         this.connections = [];
     }
 
-    async openSerial({ port, baudRate = 9600 }) {
+    async openSerial({ port, baudRate = 9600 , openCallback}) {
         let connection = {
             open: false,
             value: 0,
-            port: SerialPort(port, { baudRate, autoOpen: false })
+            port: SerialPort(port, { baudRate, autoOpen: false }),
+            listeners: new Map(),
+            listener: function (listener, once=true) {
+                this.listeners.set(listener, once)
+            }
         }
 
         connection.port.on('close', function (err) {
@@ -19,14 +23,25 @@ class DeviceController {
             this.open = false;
         }.bind(connection))
 
-        connection.port.open(function (err) {
+        connection.port.open( (err) => { 
             if (err)
                 console.error(err);
+            
+            connection.open = true;
 
-            this.open = true;
-        }.bind(connection));
+            connection.port.on('data', (data) => { // READLINE stream?!
+                connection.listeners.forEach((once, callback) => {
+                    callback(data.toString())
+                    if (once)
+                        connection.listeners.delete(callback);
+                })
+            })
+
+            openCallback(connection)
+        });
 
         this.connections.push(connection);
+        return connection;
         // console.log(connection);
     }
 
@@ -41,6 +56,28 @@ class DeviceController {
             ports = ports.filter((port) => (port.path.includes('usb') || (port.path.includes('COM'))))
 
         return (ports.map((port, key) => ({ name: `Serial-${key + 1}`, path: port.path })))
+    }
+
+    async command({path, command}, callback) {
+        const runCommand = () => {
+            let serialConn = this.connections.find (c => c.port.path==path )
+            
+            serialConn.listener( function (data) {
+                console.log(data)
+                callback(data.toString())
+            })
+            serialConn.port.write(command+"\r\n")
+        }
+
+        
+        // If not in connections.. try to connect
+        let serialConn = this.connections.find (c => c.port.path==path )
+        
+        if (!serialConn) {
+             this.openSerial({port: path, baudRate: 9600, openCallback: runCommand})
+        } else 
+            runCommand()
+    
     }
 }
 

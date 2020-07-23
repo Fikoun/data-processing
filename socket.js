@@ -9,26 +9,8 @@ class SocketController {
 
         this.server.on("connection", (socket) => {
             console.info(`\n\nClient connected id > ${socket.id}`);
-
-            socket.onData = () => { };
-            this.handleClient(socket)
             
             socket.on("settings", (settings) => {
-                
-                // SCRAP this logic !
-                socket.callbacks = new Map();
-                socket.addCallback = function (callback, once=true) {
-                    this.callbacks.set(callback, {once}) 
-                }
-                socket.handleCallbacks = function (eventData) {
-                    this.callbacks.forEach(({once}, callback) => {
-                        console.log([callback, eventData]);
-                        callback(eventData)
-        
-                        if (once)
-                            this.callbacks.delete(callback)
-                    })
-                }
 
                 this.clients.set(socket, settings);
                 
@@ -45,17 +27,6 @@ class SocketController {
 
     }
 
-
-
-    handleClient(client) {
-        client.on('data', (data) => {
-            // console.log(data);
-            // console.log(client.onData);
-            
-            // client.handleCallbacks(data);
-            client.onData(data);
-        });
-    }
 
 }
 
