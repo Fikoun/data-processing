@@ -74,10 +74,18 @@ class SocketController {
         loop(0);
     }
 
-    handleServer() {
+    handleServer() { // port-path, device-variable
         
         this.client.on('open', (port) => {
-            DeviceController.openSerial(port);
+            console.log(port)
+            DeviceController.openSerial({port});
+        });
+
+        this.client.on('command', (settings) => {
+            DeviceController.command(settings, (data) => {
+                console.log(`${settings.path} (${settings.command}) => ${data.split('\r')[0]}`);
+                this.client.emit('response', {...settings, data: data.split('\r')[0]})
+            });
         });
 
         this.client.on('list', () => this.client.emit('message', DeviceController.list()));

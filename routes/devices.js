@@ -16,6 +16,7 @@ const getStatus = (station) => {
     socket.clients.forEach((config, client) => {
         if (config.id == station._id)
             status = 'online';
+
     })
     station.status = status;
     station.save()
@@ -173,13 +174,17 @@ router.route('/command/:id').post(async (req, res) => {
             if (config.id == station._id) {
                 // console.log({found: config, device});
                 
-                client.once('data', (value) => {
+                client.once('response', (response) => {
                     // console.log({value, device});
-                    if (value.error)
-                        return res.status(400).json(value.error)
+                    if (response.error)
+                        return res.status(400).json(response.error)
+                    console.log(response)
                         
-                    res.json({ ...device._doc, value })
+                    res.json({ ...device._doc, value: response.data })
                 })
+                if (req.body.command == 'default')
+                    req.body.command = device.commands[0].command;
+
                 client.emit('command', { path: device.port, ...req.body})
             }
         })

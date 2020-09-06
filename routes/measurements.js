@@ -111,11 +111,13 @@ router.route('/run/:id').get(logged, async (req, res) => {
             const data = measurement.data;
 
             if (i == duration || measurement.state != 'running')
-                return res.json(true)
+                return res.headersSent ? true : res.json(true);
             
             setTimeout(() => {
-                client.onData = async (d) => {
+                client.once('response', async (response) => {
+                    let d = response.data;
                     console.log({d});
+
                     if(d.error)
                         return res.status(400).json(d.error);
 
@@ -126,10 +128,11 @@ router.route('/run/:id').get(logged, async (req, res) => {
                     data.push({time, value: temperature}, {time, value: layer});
                     await Measurement.findByIdAndUpdate(measurement._id, { data })
                     loop(i + 1)
-                } 
+                })
+
                 console.log("emit");
                 
-                client.emit('command', {path: device.port, command: 'get'})
+                client.emit('command', {path: device.port, command: 'C'})
 
             }, 1000);
         }
