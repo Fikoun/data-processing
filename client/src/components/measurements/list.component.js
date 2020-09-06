@@ -3,6 +3,7 @@ import { Button, Badge, Card, CardBody, CardFooter, CardHeader, CardText, Col, C
 import api from '../../api';
 import { Context } from '../../Context';
 import Alerts from '../alerts.component';
+import StationsList from '../stations/list.component';
 
 export default function MeasurementsList(props) {
 
@@ -49,7 +50,10 @@ export default function MeasurementsList(props) {
     return (
         <Container>
             <Alerts alerts={alerts} />
-            <Row className="pt-4">
+            
+            <StationsList/>
+           
+            <Row className="pt-5">
                 <Col md="7">
                     <h1> Measurements </h1>
                 </Col>
@@ -61,44 +65,7 @@ export default function MeasurementsList(props) {
                 </Col>
             </Row>
 
-            <Row className="justify-content-center">
-                <Col sm="10" className="p-3">
-                    <Card className="text-center">
-                        <CardHeader>Variables</CardHeader>
-                        <CardBody className="text-center">
-                            <ListGroup>
-                                {
-                                    // refactor
-                                    devices.map((device, key) => {
-                                        return (
-                                            <ListGroupItem key={key} className="justify-content-between">
-                                                {device.name}
-
-                                                <Button color="primary" size="sm" className="mx-2" onClick={() => testCommand(key)}>
-                                                    Test
-                                                    <Badge color="light" className="mx-2">{device.port || 0}</Badge>
-                                                </Button>
-                                                <Badge color="dark" pill>
-                                                    Value: { loading ? <Spinner size='sm'/> : device.value || '#' }
-                                                </Badge>
-                                            </ListGroupItem>)
-                                    })
-                                }
-
-
-
-                            </ListGroup>
-
-                                <Button color="dark" className=" mt-4" onClick={()=> props.history.push('/variables')}>
-                                    Manage Variables
-                                </Button>
-                        </CardBody>
-                    </Card>
-                </Col>
-            </Row>
-
-
-            <Row className="mt-5 pt-3">
+            <Row className="pt-3">
                 {
                     measurements.map((measurement, key) => {
                         return (

@@ -4,7 +4,7 @@ import api from '../../api';
 import { Context } from '../../Context';
 import Station from './station.component';
 
-export default function VariablesList(props) {
+export default function StationsList(props) {
 
     const auth = useContext(Context);
 
@@ -13,7 +13,6 @@ export default function VariablesList(props) {
 
     let stations = stationsState.filter((station) => station.name !== "local")
     let localStation = stationsState.find((station) => station.name === "local")
-
 
     useEffect(() => {
         setLoading(true);
@@ -25,7 +24,6 @@ export default function VariablesList(props) {
             setStations(res.data);
             setLoading(false);
         })();
-
     }, [])
 
     const setupLocalStation = async () => {
@@ -34,21 +32,25 @@ export default function VariablesList(props) {
         window.location.reload();
     }
 
-    return (
-        <Container>
+    const connectStation = () => {
+        setStations([localStation, ...stations, {new: true}])
+    }
+
+    return (<>
             <Row className="pt-4">
                 <Col md="7">
-                    <h1> Variables </h1>
+                    <h1> Data stations </h1>
                 </Col>
 
                 <Col md="5" className="text-right">
-                    <Button color="success" className="px-4 py-2 ml-auto">
-                        + Add DataStation
+                    <Button color="info" className="px-4 py-2 ml-auto" onClick={connectStation}>
+                        Connect Station
                     </Button>
                 </Col>
             </Row>
 
-            <Row className="pt-4 justify-content-center">
+            <Row className="pt-3 justify-content-around">
+                {/* LOCAL Station */}
                 {
                    localStation ? <Station station={localStation} /> : (
                         <fieldset className="col-11">
@@ -62,12 +64,11 @@ export default function VariablesList(props) {
                    )
                 }
 
+                {/* Other Stations */}
                 { 
                     stations.map((station, key) => <Station key={key} station={station} />)
                 }
             </Row>
-
-        </Container>
-    );
+    </>);
 
 }

@@ -14,8 +14,6 @@ import MeasurementsList from "./components/measurements/list.component";
 import MeasurementCreate from "./components/measurements/create.component";
 import Measurement from "./components/measurements/detail.component";
 
-import VariablesList from "./components/variables/list.component";
-
 import NotFound from "./components/notfound.component";
 
 
@@ -32,8 +30,6 @@ export default function App() {
           <Route path="/measurements" exact component={MeasurementsList} />
           <Route path="/measurements/new" exact component={MeasurementCreate} />
           <Route path="/measurement/:id" exact component={Measurement} />
-
-          <Route path="/variables" exact component={VariablesList} />
 
           <Route path="/docs" exact component={Documentation} />
           
