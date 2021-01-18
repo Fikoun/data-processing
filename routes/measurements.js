@@ -6,7 +6,6 @@ let Station = require('../models/station.model');
 let User = require('../models/user.model');
 
 const {logged, auth} = require('../middleware');
-const SerialPort = require('serialport');
 const socket = require('../socket');
 
 // @route   GET /measurements

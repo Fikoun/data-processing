@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Row, ListGroup, ListGroupItem, Badge, Spinner, ButtonDropdown, DropdownToggle, DropdownItem, DropdownMenu, Button, Col, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Input, Label } from 'reactstrap';
 import api from '../../api';
 import { Context } from '../../Context';
@@ -17,8 +17,9 @@ export default function Station(props) {
     const [station, setStation] = useState(defaultStation)
     const [updatedStation, setUpdatedStation] = useState(defaultStation)
 
-    const devices = station.devices || [];
-    const [newDevice, setNewDevice] = useState({ name: "", port: "", commands: [] })
+    //const devices = station.devices || [];
+    const [devices, setDevices] = useState([])
+    const [newDevice, setNewDevice] = useState(false)
     const [ports, setPorts] = useState([])
 
     const [dropdown, setDropdown] = useState(false)
@@ -27,18 +28,21 @@ export default function Station(props) {
     const [loading, setLoading] = useState(false)
     const [addingDevice, setAddingDevice] = useState(false)
 
-    // useEffect(() => {
-    //     setLoading(true);
-    //     (async () => {
-    //         if (!await auth.isLogged())
-    //             window.location = "/login";
+    useEffect(() => {
+        setLoading(true);
+        (async () => {
+            if (!await auth.isLogged())
+                window.location = "/login";
 
-    //         let res = await api.get("/stations", auth.user.token);
-    //         setStation(res.data);
-    //         setLoading(false);
-    //     })();
+            let res_stations = await api.get("/stations/status/" + station._id, auth.user.token);
+            let res_devices = await api.get("/devices/station/" + station._id, auth.user.token);
 
-    // }, [])
+            setStation(res_stations.data);
+            setDevices(res_devices.data.map((d) => <Device default={d} />));
+
+            setLoading(false);
+        })();
+    }, [])
 
     //  STATION ACTIONS
     const statusRefresh = async () => {
@@ -69,25 +73,43 @@ export default function Station(props) {
         setLoading(true);
         let res = await api.get(`/stations/ports/${station._id}`, auth.user.token);
         console.log(res.data);
-        setNewDevice({ ...newDevice, port: res.data[0] || "" })
+        //setNewDevice({ ...newDevice, port: res.data[0] || "" })
         setPorts(res.data);
         setLoading(false);
     }
 
-    const addDevice = async () => {
-        setLoading(true);
-        let res = await api.post(`/devices/add/${station._id}`, newDevice, auth.user.token);
-        setStation({ ...station, devices: res.data });
-        setAddingDevice(false)
-        setLoading(false);
+    // const addDevice = async () => {
+    //     setLoading(true);
+    //     let res = await api.post(`/devices/add/${station._id}`, newDevice, auth.user.token);
+    //     setStation({ ...station, devices: res.data });
+    //     setAddingDevice(false)
+    //     setLoading(false);
+    // }
+
+    const addDevice = () => {
+        setNewDevice(false);
+        setNewDevice(
+        <Device
+            isNew={true}
+            onSave={saveDevice}
+            onClose={cancelDevice}
+            default={{station: station._id}}
+             />
+        )
+    }
+    const cancelDevice = () => setNewDevice(false);
+
+    const saveDevice = (data) => {
+        setDevices([...devices, <Device default={data} />])
+        setNewDevice(false);
     }
 
     let isOnline = station.status === 'online'
     let status = station.status.charAt(0).toUpperCase() + station.status.slice(1)
 
     return [!isNew && (
-        <fieldset className="col-md-9 col-lg-7 col-xl-5">
-            <legend>
+        <fieldset className="col-md-9 col-lg-7 col-xl-5 bg-white">
+            <legend style={{transform: 'translateY(-10px)'}}>
                 {/* <i>DataStation</i> - */}
 
                 <ButtonDropdown isOpen={dropdown} toggle={() => setDropdown(!dropdown)}>
@@ -114,14 +136,16 @@ export default function Station(props) {
 
 
             </legend>
-            <ListGroup className="p-3">
+            <ListGroup className="px-5 py-2">
                 {
-                    devices.map((device) => (
-                        <ListGroupItem> <Device station={station._id} device={device} /> </ListGroupItem>
+                    devices.map((device, key) => (
+                        <ListGroupItem key={key}> {device} </ListGroupItem>
                     ))
                 }
+                { loading && (<Row className="justify-content-center pt-4 pb-2"><Spinner size="lg" className="text-muted" /></Row>)}
+                {newDevice}
             </ListGroup>
-            <Button className="d-block w-75 mx-auto my-3" color='success' onClick={() => setAddingDevice(true)}> Add device </Button>
+            <Button className="d-block w-100 mx-auto m-0 mt-4" outline color='success' onClick={addDevice}> <strong>+</strong> Add Device </Button>
 
 
 
@@ -170,38 +194,38 @@ export default function Station(props) {
                 </ModalFooter>
             </Modal>
         </fieldset>
-        ),
-        <Modal isOpen={popup} toggle={() => setPopup(false)}>
-            <ModalHeader toggle={() => setPopup(false)}>
-                Station connection
+    ),
+    <Modal isOpen={popup} toggle={() => setPopup(false)}>
+        <ModalHeader toggle={() => setPopup(false)}>
+            Station connection
             </ModalHeader>
-            <ModalBody>
-                <Form>
-                    <FormGroup row>
-                        <Label for="name" sm={4}>Station Name</Label>
-                        <Col sm={6}>
-                            <Input type="text" placeholder="station #1" defaultValue={updatedStation.name} onChange={({ currentTarget }) => setUpdatedStation({ ...updatedStation, name: currentTarget.value })} />
-                        </Col>
-                    </FormGroup>
-                    <FormGroup row>
-                        <Label for="name" sm={4}>Available connections</Label>
-                        <Col sm={6}>
-                            {/* <Input type="select" onChange={({ currentTarget }) => setNewDevice({ ...newDevice, port: currentTarget.value })}>
+        <ModalBody>
+            <Form>
+                <FormGroup row>
+                    <Label for="name" sm={4}>Station Name</Label>
+                    <Col sm={6}>
+                        <Input type="text" placeholder="station #1" defaultValue={updatedStation.name} onChange={({ currentTarget }) => setUpdatedStation({ ...updatedStation, name: currentTarget.value })} />
+                    </Col>
+                </FormGroup>
+                <FormGroup row>
+                    <Label for="name" sm={4}>Available connections</Label>
+                    <Col sm={6}>
+                        {/* <Input type="select" onChange={({ currentTarget }) => setNewDevice({ ...newDevice, port: currentTarget.value })}>
                     {ports.map((port, key) => <option key={key} value={port.path}> {port.path} </option>)}
                 </Input> */}
-                        </Col>
-                        <Col sm={2} className="p-1 pr-3">
-                            <Button size="sm" color="info" onClick={portsRefresh} disabled={loading}>
-                                Refresh
+                    </Col>
+                    <Col sm={2} className="p-1 pr-3">
+                        <Button size="sm" color="info" onClick={portsRefresh} disabled={loading}>
+                            Refresh
                 </Button>
-                        </Col>
-                    </FormGroup>
-                </Form>
-            </ModalBody>
-            <ModalFooter>
-                <Button color="success" className="px-4 mx-2" onClick={addDevice} disabled={loading}> Save </Button>
-                <Button color="secondary" onClick={() => setPopup(false)} disabled={loading}>Cancel</Button>
-            </ModalFooter>
-        </Modal>
+                    </Col>
+                </FormGroup>
+            </Form>
+        </ModalBody>
+        <ModalFooter>
+            <Button color="success" className="px-4 mx-2" onClick={addDevice} disabled={loading}> Save </Button>
+            <Button color="secondary" onClick={() => setPopup(false)} disabled={loading}>Cancel</Button>
+        </ModalFooter>
+    </Modal>
     ];
 }

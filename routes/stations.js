@@ -87,7 +87,7 @@ router.route('/setup').get(async (req, res) => {
 
                 // Spawn new instance of local DataStation
                 localStationProcess = process.spawn('node', ['data_station/index.js']);
-                // console.log(localStationProcess);
+                console.log(localStationProcess);
                 localStationProcess.stdout.on('data', (data) => res.json(data.toString()))
             } catch (err) {
                 res.status(400).json(err)
@@ -108,13 +108,13 @@ router.route('/start/:id').get(async (req, res) => {
                 localStationProcess.kill();
 
             localStationProcess = process.spawn('node', ['data_station/index.js']);
-            // console.log(localStationProcess);
-            localStationProcess.stdout.on('data', (data) => res.json(data.toString()))
+            //console.log(localStationProcess);
+            localStationProcess.stdout.on('data', data => response(data))
         }
+        res.json(station)
     } catch (err) {
         res.status(400).json(err)
     }
-    res.json(true);
 });
 
 
@@ -136,7 +136,7 @@ router.route('/stop/:id').get(async (req, res) => {
 // @route   GET /stations/ports
 // @desc    Fetches avaible devices
 // @access  user
-router.route('/ports/:id').get(logged, async (req, res) => {
+router.route('/ports/:id').get(async (req, res) => {
     try {
         let station = await Station.findById(req.params.id);
         socket.clients.forEach((config, client) => {

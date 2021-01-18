@@ -37,7 +37,7 @@ export default function App() {
           <Route path="/about" exact component={About} />
 
           <Route path="/register" exact component={UserRegister} />
-          <Route path="/login" exact component={UserLogin} />
+          <Route path="/login"  component={UserLogin} />
           
           <Route path="/auth" exact component={Auth} />
 

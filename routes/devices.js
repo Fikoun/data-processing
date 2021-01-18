@@ -1,11 +1,10 @@
 const router = require('express').Router();
-let Station = require('../models/station.model');
+let Device = require('../models/device.model');
 const { logged, auth } = require('../middleware');
-const SerialPort = require('serialport');
+const SerialPort =  require('serialport');
 const process = require('child_process')
 const socket = require('../socket');
 const fs = require('fs');
-
 
 let localStationProcess;
 const stations = [];
@@ -40,13 +39,9 @@ const stationsStatus = (req, res) => {
 // @access  user
 router.route('/variables').get(async (req, res) => {
     try {
-        let variables = [];
-        Station.find()
-            .then((stations) => {
-                stations.forEach((station) => {
-                    variables = [...variables, ...station.devices]
-                })
-                res.json(variables);
+        Device.find()
+            .then((devices) => {
+                res.json(devices);
             })
             .catch(err => {
                 console.error(err);
@@ -87,27 +82,93 @@ router.route('/status/:id/:port').get(async (req, res) => {
     }
 });
 
-// @route   POST /devices/add
-// @desc    Adds new device
+// @desc    Gets all devices by station id
 // @access  user
-router.route('/add/:id').post(async (req, res) => {
+router.route('/station/:station').get(async (req, res) => {
+    Device.find({ station: req.params.station })//.populate("connections")
+        .then((devices) => res.json(devices))
+        .catch(err => {
+            console.error(err);
+            res.status(400).json(err)
+        });
+});
+
+// @route   POST /devices/add
+// @desc    Adds new device to a station
+// @access  user
+router.route('/add').post(async (req, res) => {
+    const device = new Device(req.body);
+
+    device.save()
+        .then(() => res.json('Successfully added'))
+        .catch(err => res.status(400).json(err));
+});
+
+
+// @route   POST /devices/connections/add/:id_device/:id_connection
+// @desc    Adds new connection to a device
+// @access  user
+router.route('/connections/add/:id_device/:command').post(async (req, res) => {
     try {
-        let station = await Station.findById(req.params.id);
+        let device = await Device.findById(req.params.id_device);
 
-        station.devices.push({
-            name: req.body.name,
-            port: req.body.port,
-            commands: [{ name: 'get', command: req.body.command }]
-        })
+        // console.log(device.connections);
+        // console.log(req.params);
 
-        station.save();
-        res.json(station.devices);
+        device.connections.push({command: req.params.command})
+        //device.connections.push(req.params.id_connection)
+
+        await device.save();
+
+        res.json(device.connections);
+        //res.json(device.populate("connections").connections);
     } catch (err) {
-        console.log(err);
-
         res.status(400).json(err)
     }
 });
+
+// @route   POST /devices/connections/add/:id_device/:id_connection
+// @desc    Adds new connection to a device
+// @access  user
+router.route('/connections/remove/:id_device/:id_connection').post(async (req, res) => {
+    try {
+        let device = await Device.findById(req.params.id_device);
+
+        // console.log(device.connections);
+        // console.log(req.params);
+        let connections = station.connections.filter((d) => d !== req.params.params.id_connection)
+            
+        device.connections = connections;
+        await device.save();
+
+        res.json(device.connections);
+        // res.json(device.populate("connections").connections);
+    } catch (err) {
+        res.status(400).json(err)
+    }
+});
+
+// @route   GET /devices/remove/:id_station/:id_device
+// @desc    Gets all devices from station by id
+// @access  user
+router.route('/remove/:id_station/:id_device').get(async (req, res) => {
+    try {
+        let station = await Station.findById(req.params.id_station);
+
+        console.log(station.devices);
+        console.log(req.params);
+
+        let devices = station.devices.filter((d) => d.id !== req.params.id_device)
+            
+        station.devices = devices;
+        await station.save();
+
+        res.json();
+    } catch (err) {
+        res.status(400).json(err)
+    }
+});
+
 
 // @route   POST /stations/start/:id
 // @desc    Tryes to connect or starts local DataStation
@@ -222,7 +283,6 @@ router.route('/remove').post(logged, (req, res) => {
 // @desc    Sends command to device
 // @access  user
 router.route('/command').post(logged, (req, res) => {
-
     if (!connections[req.body.port]) {
         try {
             connections[req.body.port] = new SerialPort(req.body.port, {

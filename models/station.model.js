@@ -8,24 +8,7 @@ const stationScheme = new Schema({
         type: String,
         enum: ['offline', 'waiting', 'online', 'error'],
         required: true,
-    },
-    devices: [
-        {
-            name: String,
-            baudRate: {
-                type: Number,
-                default: 9600
-            },
-            port: {
-                type: String,
-                required: true
-            },
-            commands: [{
-                name: String,
-                command: String,
-            }]
-        }
-    ]
+    }
 },{ timestamps: true });
 
 const Station = mongoose.model('Station', stationScheme);

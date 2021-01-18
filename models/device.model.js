@@ -2,18 +2,29 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const deviceScheme = new Schema({
-    port: {
-        type: String,
-        required: true
-    },
     name: {
         type: String,
         required: true
     },
-    commands: [{
-        name: String,
-        command: String
-    }]
+    port: {
+        type: String,
+        required: true
+    },
+    baudRate: {
+        type: Number,
+        default: 9600
+    },
+    station: {
+        type: mongoose.Types.ObjectId,
+        ref: "Station"
+    },
+    connections: [
+    //     {
+    //     type: mongoose.Types.ObjectId,
+    //     ref: "Connection",
+    //     status: Boolean
+    // }
+]
 },{ timestamps: true });
 
 const Device = mongoose.model('Device', deviceScheme);

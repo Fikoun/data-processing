@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Col, Container, Row, Spinner} from 'reactstrap';
+import { Button, Col, Container, Row, Spinner, Jumbotron } from 'reactstrap';
 import api from '../../api';
 import { Context } from '../../Context';
 import Station from './station.component';
@@ -13,6 +13,7 @@ export default function StationsList(props) {
 
     let stations = stationsState.filter((station) => station.name !== "local")
     let localStation = stationsState.find((station) => station.name === "local")
+    console.log(localStation);
 
     useEffect(() => {
         setLoading(true);
@@ -33,42 +34,44 @@ export default function StationsList(props) {
     }
 
     const connectStation = () => {
-        setStations([localStation, ...stations, {new: true}])
+        setStations([localStation, ...stations, { new: true }])
     }
 
     return (<>
-            <Row className="pt-4">
-                <Col md="7">
-                    <h1> Data stations </h1>
-                </Col>
+        <Row>
+            <Col md="7" className="my-2">
+                <h1> Data stations </h1>
+            </Col>
 
-                <Col md="5" className="text-right">
-                    <Button color="info" className="px-4 py-2 ml-auto" onClick={connectStation}>
-                        Connect Station
-                    </Button>
-                </Col>
-            </Row>
+            <Col md="5" className="text-center my-3">
+                <Button color="info" className="w-100 py-2" row onClick={connectStation}>
+                    <span>{' > '}</span>Connect Station
+                </Button>
+            </Col>
+        </Row>
 
-            <Row className="pt-3 justify-content-around">
-                {/* LOCAL Station */}
-                {
-                   localStation ? <Station station={localStation} /> : (
-                        <fieldset className="col-11">
-                            <legend>
-                                <i>DataStation</i> - local
-                                <Button disabled={loading} onClick={setupLocalStation} color="info" className="ml-3">
-                                    {loading ? <Spinner size="sm mx-3" /> : "Setup local DataStation"}
-                                </Button>
-                            </legend>
-                        </fieldset>
-                   )
-                }
+        <hr/>
 
-                {/* Other Stations */}
-                { 
-                    stations.map((station, key) => <Station key={key} station={station} />)
-                }
-            </Row>
+        <Row className="mx-0 pt-2 justify-content-around">
+            {/* LOCAL Station */}
+            {
+                localStation ? <Station station={localStation} /> : (
+                    <fieldset className="col-11">
+                        <legend>
+                            <i>DataStation - local </i>
+                            <Button disabled={loading} onClick={setupLocalStation} color="info" className="ml-3">
+                                {loading ? <Spinner size="sm mx-3" /> : "Setup local DataStation"}
+                            </Button>
+                        </legend>
+                    </fieldset>
+                )
+            }
+
+            {/* Other Stations */}
+            {
+                //stations.map((station, key) => (<Station key={key} station={station} />))
+            }
+        </Row>
     </>);
 
 }

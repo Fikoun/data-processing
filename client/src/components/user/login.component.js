@@ -8,8 +8,9 @@ import { Context } from '../../Context';
 export default function UserLogin(props) {
 
     const auth = useContext(Context);
-
-    const [email, setEmail] = useState('');
+    
+    const lastGuery = props.location.pathname.split('/').pop()
+    const [email, setEmail] = useState(lastGuery);
     const [password, setPassword] = useState('');
 
     const [error, setError] = useState(null);
@@ -46,7 +47,7 @@ export default function UserLogin(props) {
                                 <FormGroup row>
                                     <Label for="email" sm={4}>Email</Label>
                                     <Col sm={6}>
-                                        <Input type="email" placeholder="Email" onChange={({ currentTarget }) => setEmail(currentTarget.value)} />
+                                        <Input type="email" placeholder="Email" value={email} onChange={({ currentTarget }) => setEmail(currentTarget.value)} />
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>

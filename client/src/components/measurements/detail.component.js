@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Chart from "react-google-charts";
-import { Container, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Input, Label, Spinner } from 'reactstrap';
+import { Container, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Input, Label, Spinner, Jumbotron } from 'reactstrap';
 import Alerts from '../alerts.component';
 
 import api from '../../api';
@@ -182,6 +182,28 @@ export default function Measurement(props) {
                     />
                 </Col>
             </Row>
+            <hr className="my-4"/>
+            <Jumbotron className="mt-4">
+                <h1>Control variables</h1> 
+                <Row className="mt-4">
+                    <Label for="name" sm={3}>Voltage</Label>
+                    <Col sm={3}>
+                        <Input type="number" placeholder="V"  step="0.01" />
+                    </Col>
+                    <Col sm={2}>
+                        <Button color="success" className="px-3">Set</Button>
+                    </Col>
+                </Row>
+                <Row className="mt-4">
+                    <Label for="name" sm={3}>Current</Label>
+                    <Col sm={3}>
+                        <Input type="number" placeholder="A" step="0.01"  />
+                    </Col>
+                    <Col sm={2}>
+                        <Button color="success" className="px-3">Set</Button>
+                    </Col>
+                </Row>
+            </Jumbotron>
 
             <Modal isOpen={editing} toggle={() => setEditing(false)}>
                 <ModalHeader toggle={() => setEditing(false)}>

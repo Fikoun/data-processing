@@ -1,7 +1,6 @@
 const SerialPort = require("serialport");
 
 class DeviceController {
-
     constructor() {
         this.connections = [];
     }
@@ -76,8 +75,7 @@ class DeviceController {
         if (!serialConn) {
              this.openSerial({port: path, baudRate: 9600, openCallback: runCommand})
         } else 
-            runCommand()
-    
+            runCommand()  
     }
 }
 

@@ -11,7 +11,7 @@
   "dependencies": {
     "inquirer": "^7.3.2",
     "ora": "^4.0.4",
-    "serialport": "^8.0.7",
+    "serialport": "^9.0.4",
     "socket.io-client": "^2.3.0",
     "usb": "^1.6.3"
   }

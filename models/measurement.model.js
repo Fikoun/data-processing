@@ -20,6 +20,10 @@ const measurementScheme = new Schema({
         default: 'new'
     },
     data: [{
+        device: {
+            type: mongoose.Types.ObjectId,
+            ref: "Device"
+        },
         time: {
             type: Date
         },
@@ -27,7 +31,10 @@ const measurementScheme = new Schema({
             type: Number
         } 
     }],
-    device: mongoose.Types.ObjectId
+    devices: [{
+        type: mongoose.Types.ObjectId,
+        ref: "Device"
+    }]
 },{ timestamps: true });
 
 const Measurement = mongoose.model('Measurement', measurementScheme);

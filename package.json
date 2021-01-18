@@ -4,10 +4,10 @@
   "description": "Data procession app for Ceitec",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "server": "nodemon server.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"npm run start\" \"npm run client\"", 
+    "server": "node server.js",
     "client": "npm start --prefix client",
+    "watch": "nodemon server.js",
     "client-install": "npm install --prefix client",
     "build": "npm run build --prefix client",
     "setup": "npm run client-install && npm install",
@@ -24,7 +24,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.6",
     "nodemon": "^2.0.2",
-    "serialport": "^8.0.7",
+    "serialport": "^9.0.1",
     "socket.io": "^2.3.0"
   }
 }

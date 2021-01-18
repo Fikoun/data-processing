@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Badge, Card, CardBody, CardFooter, CardHeader, CardText, Col, Container, ListGroup, ListGroupItem, Row, Spinner, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Jumbotron, Button, Badge, Card, CardBody, CardFooter, CardHeader, CardText, Col, Container, ListGroup, ListGroupItem, Row, Spinner, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Input, Label } from 'reactstrap';
 import api from '../../api';
 import { Context } from '../../Context';
 import Alerts from '../alerts.component';
@@ -34,7 +34,7 @@ export default function MeasurementsList(props) {
         setLoading(true)
         let newDevices = devices;
         try {
-            let response = await api.post('devices/command/'+devices[key]._id, {command: "default"}, auth.user.token);
+            let response = await api.post('devices/command/' + devices[key]._id, { command: "default" }, auth.user.token);
             newDevices[key] = response.data;
             setDevices(newDevices);
         } catch (error) {
@@ -50,40 +50,46 @@ export default function MeasurementsList(props) {
     return (
         <Container>
             <Alerts alerts={alerts} />
-            
-            <StationsList/>
-           
-            <Row className="pt-5">
-                <Col md="7">
-                    <h1> Measurements </h1>
-                </Col>
+            <Jumbotron className="my-5 px-5">
+                <StationsList />
+            </Jumbotron>
 
-                <Col md="5" className="text-right">
-                    <Button color="success" className="px-4 py-2 ml-auto" onClick={() => measurementCreate()}>
-                        + Create Measurement
-                    </Button>
-                </Col>
-            </Row>
+            <Jumbotron className="px-5">
 
-            <Row className="pt-3">
-                {
-                    measurements.map((measurement, key) => {
-                        return (
-                            <Col sm="10" md="6" lg="4" className="p-3" key={key}>
+                <Row className="justify-content-center">
+                    <Col md="7" className="my-2">
+                        <h1> Measurements </h1>
+                    </Col>
 
-                                <Card className="text-center">
-                                    <CardHeader>{measurement.name}</CardHeader>
-                                    <CardBody>
-                                        <CardText>{measurement.description}</CardText>
-                                        <Button className="mt-3" color="info" onClick={() => measurementDetail(measurement._id)}>Open measurement</Button>
-                                    </CardBody>
-                                    <CardFooter className="text-right">Duration {measurement.duration} s</CardFooter>
-                                </Card>
-                            </Col>
-                        )
-                    })
-                }
-            </Row>
+                    <Col md="5" className="text-center my-3">
+                        <Button color="success" className="w-100 py-2" onClick={() => measurementCreate()}>
+                            <strong>+</strong> Create Measurement
+                        </Button>
+                    </Col>
+                </Row>
+
+                <hr/>
+
+                <Row className="pt-3 justify-content-center">
+                    {
+                        measurements.map((measurement, key) => {
+                            return (
+                                <Col sm="10" md="6" lg="4" className="p-3" key={key}>
+
+                                    <Card className="text-center">
+                                        <CardHeader>{measurement.name}</CardHeader>
+                                        <CardBody>
+                                            <CardText>{measurement.description}</CardText>
+                                            <Button className="mt-3" color="info" onClick={() => measurementDetail(measurement._id)}>Open measurement</Button>
+                                        </CardBody>
+                                        <CardFooter className="text-right">Duration {measurement.duration} s</CardFooter>
+                                    </Card>
+                                </Col>
+                            )
+                        })
+                    }
+                </Row>
+            </Jumbotron>
 
         </Container>
     );

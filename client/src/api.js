@@ -8,8 +8,11 @@ const axios_instance = axios.create({
 });
 
 class Api {
-  get = async (url, token) => {
+  get = async (url, token=false) => {
     let auth = {};
+    if (token === false) 
+      token = localStorage.getItem('token');
+    
     if (token) {
       auth = {
         headers: {
@@ -20,8 +23,11 @@ class Api {
     return await axios_instance.get(url, auth)
   }
 
-  post = async (url, data,token) => {
+  post = async (url, data,token=false) => {
     let auth = {};
+    if (token === false) 
+      token = localStorage.getItem('token');
+      
     if (token) {
       auth = {
         headers: {
