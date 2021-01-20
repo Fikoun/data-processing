@@ -102,15 +102,17 @@ router.route('/setup').get(async (req, res) => {
 router.route('/start/:id').get(async (req, res) => {
     try {
         let station = await Station.findById(req.params.id);
-
+        //console.log(station)
+        
         if (station.name == 'local') {
             if (localStationProcess)
                 localStationProcess.kill();
 
             localStationProcess = process.spawn('node', ['data_station/index.js']);
             //console.log(localStationProcess);
-            localStationProcess.stdout.on('data', data => response(data))
+            localStationProcess.stdout.on('data', data => console.log(data))
         }
+        
         res.json(station)
     } catch (err) {
         res.status(400).json(err)

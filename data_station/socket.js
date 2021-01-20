@@ -82,6 +82,8 @@ class SocketController {
         });
 
         this.client.on('command', (settings) => {
+            console.log(settings)
+            
             DeviceController.command(settings, (data) => {
                 console.log(`${settings.path} (${settings.command}) => ${data.split('\r')[0]}`);
                 this.client.emit('response', {...settings, data: data.split('\r')[0]})

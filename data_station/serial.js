@@ -29,6 +29,7 @@ class DeviceController {
             connection.open = true;
 
             connection.port.on('data', (data) => { // READLINE stream?!
+                console.log({data})
                 connection.listeners.forEach((once, callback) => {
                     callback(data.toString())
                     if (once)
@@ -57,23 +58,27 @@ class DeviceController {
         return (ports.map((port, key) => ({ name: `Serial-${key + 1}`, path: port.path })))
     }
 
-    async command({path, command}, callback) {
+    async command({path, command, baudRate}, callback) {
         const runCommand = () => {
             let serialConn = this.connections.find (c => c.port.path==path )
             
+            console.log({conns: this.connections})
+            
             serialConn.listener( function (data) {
-                console.log(data)
+                console.log({data})
                 callback(data.toString())
             })
-            serialConn.port.write(command+"\r\n")
+            serialConn.port.write(command+"\r")
         }
 
         
         // If not in connections.. try to connect
         let serialConn = this.connections.find (c => c.port.path==path )
+
+        console.log({conns: this.connections})
         
         if (!serialConn) {
-             this.openSerial({port: path, baudRate: 9600, openCallback: runCommand})
+             this.openSerial({port: path, baudRate, openCallback: runCommand})
         } else 
             runCommand()  
     }

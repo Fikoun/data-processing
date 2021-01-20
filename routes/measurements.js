@@ -26,9 +26,9 @@ router.route('/add').post(logged, (req, res) => {
     const name = req.body.name;
     const description = req.body.description;
     const duration = Number(req.body.duration);
-    const device = req.body.device;
+    const devices = req.body.devices;
 
-    const measurement = new Measurement({ name, description, duration, device });
+    const measurement = new Measurement({ name, description, duration, devices });
 
     measurement.save()
         .then(() => res.json('Successfully added'))
@@ -80,20 +80,20 @@ router.route('/run/:id').get(logged, async (req, res) => {
 
     try {
         const measurement = await Measurement.findById(req.params.id);
-        let station = await Station.findOne({
-            devices: {
-                $elemMatch: { _id: measurement.device }
-            }
-        });
-        let device = station.devices.find((d) => d._id.toString() == measurement.device.toString())
+        
+        //let device = station.devices.find((d) => d._id.toString() == measurement.device.toString())
+
+        let device = await Device.findById(measurement.devices[0])
+        
+        console.log({ device });
 
         let client;
         socket.clients.forEach((config, c) => {
-            if (config.id == station._id)
+            if (config.id == device.station.toString())
                 client = c
         })   
         
-        // console.log({ds:station.devices, device, id:measurement.device});
+        
         
         measurement.state = 'running';
         await measurement.save();
@@ -131,7 +131,7 @@ router.route('/run/:id').get(logged, async (req, res) => {
 
                 console.log("emit");
                 
-                client.emit('command', {path: device.port, command: 'C'})
+                client.emit('command', {path: device.port, command: 'C', baudRate: device.baudRate})
 
             }, 1000);
         }

@@ -37,7 +37,7 @@ export default function MeasurementsCreate(props) {
 
         setLoading(true);
 
-        const measurement = { name, description, duration, device };
+        const measurement = { name, description, duration, devices: [device] };
         try {
             await api.post("measurements/add", measurement, auth.user.token);
             props.history.push("/measurements");
