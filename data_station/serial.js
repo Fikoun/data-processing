@@ -66,7 +66,9 @@ class DeviceController {
             
             serialConn.listener( function (data) {
                 console.log({data})
-                callback(data.toString())
+                if (data.toString()) {
+                    callback(data.toString())
+                }
             })
             serialConn.port.write(command+"\r")
         }
